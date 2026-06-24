@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Waste Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="logo">♻️</div>
+                <div class="brand-info">
+                    <h1>AI Waste Management</h1>
+                    <div class="system-status">
+                        <span class="status-indicator" id="systemStatus"></span>
+                        <span id="statusText">Offline</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <div class="clock" id="clock">00:00:00</div>
+                <button class="btn btn--primary" id="startStopBtn">
+                    <span id="btnText">Start System</span>
+                </button>
+                <button class="btn btn--outline emergency-btn" id="emergencyBtn">
+                    🛑 Emergency Stop
+                </button>
+                <button class="btn btn--secondary" id="settingsBtn">
+                    ⚙️ Settings
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- System Overview Panel -->
+        <section class="overview-panel">
+            <div class="metrics-grid">
+                <div class="metric-card" id="itemsPerMinute">
+                    <div class="metric-value">0</div>
+                    <div class="metric-label">Items/Min</div>
+                    <div class="metric-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="metric-card" id="accuracy">
+                    <div class="metric-value">96.8%</div>
+                    <div class="metric-label">Accuracy</div>
+                    <div class="metric-progress">
+                        <div class="progress-bar" style="width: 96.8%"></div>
+                    </div>
+                </div>
+                <div class="metric-card" id="uptime">
+                    <div class="metric-value">00:00:00</div>
+                    <div class="metric-label">Uptime</div>
+                </div>
+                <div class="metric-card" id="speed">
+                    <div class="metric-value">1.0x</div>
+                    <div class="metric-label">Speed</div>
+                    <div class="speed-control">
+                        <input type="range" id="speedSlider" min="0.5" max="3" step="0.1" value="1">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Processing Area -->
+        <section class="processing-area">
+            <!-- Camera Feed -->
+            <div class="camera-section">
+                <div class="camera-feed">
+                    <video id="cameraVideo" autoplay muted></video>
+                    <div class="camera-overlay">
+                        <div class="detection-box" id="detectionBox" style="display: none;">
+                            <div class="detection-info">
+                                <span class="detection-type">Plastic</span>
+                                <span class="confidence">94%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="camera-btn" id="enableCamera">
+                            📷 Enable Camera
+                        </button>
+                        <button class="camera-btn" id="switchCamera" style="display: none;">
+                            🔄 Switch
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conveyor Belt System -->
+            <div class="conveyor-section">
+                <div class="conveyor-belt">
+                    <div class="belt-surface" id="beltSurface">
+                        <div class="belt-pattern"></div>
+                    </div>
+                    <div class="waste-items" id="wasteItems"></div>
+                    <div class="detection-zone">
+                        <div class="detection-line"></div>
+                        <span class="zone-label">AI Detection Zone</span>
+                    </div>
+                </div>
+                
+                <!-- Robotic Arm -->
+                <div class="robotic-arm" id="roboticArm">
+                    <div class="arm-base">
+                        <div class="arm-segment arm-shoulder">
+                            <div class="arm-segment arm-elbow">
+                                <div class="arm-segment arm-wrist">
+                                    <div class="arm-gripper">
+                                        <div class="gripper-finger left"></div>
+                                        <div class="gripper-finger right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arm-status">
+                        <div class="led-indicator" id="armLed"></div>
+                        <span id="armStatus">Idle</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Waste Bins Section -->
+        <section class="bins-section">
+            <div class="bins-container" id="binsContainer">
+                <!-- Bins will be generated dynamically -->
+            </div>
+        </section>
+
+        <!-- Dashboard and Analytics -->
+        <section class="dashboard-section">
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="realtime">Real-time</button>
+                <button class="tab-btn" data-tab="analytics">Analytics</button>
+                <button class="tab-btn" data-tab="controls">Controls</button>
+            </div>
+
+            <!-- Real-time Tab -->
+            <div class="tab-content active" id="realtimeTab">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Throughput Over Time</h3>
+                        <canvas id="throughputChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Waste Distribution</h3>
+                        <canvas id="distributionChart" width="300" height="300"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Processing Efficiency</h3>
+                        <canvas id="efficiencyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analyticsTab">
+                <div class="analytics-controls">
+                    <select id="timeRange">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                    <button class="btn btn--outline" id="exportBtn">📊 Export Data</button>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Environmental Impact</h4>
+                        <div class="impact-metrics">
+                            <div class="impact-item">
+                                <span class="impact-value" id="co2Saved">0 kg</span>
+                                <span class="impact-label">CO₂ Saved</span>
+                            </div>
+                            <div class="impact-item">
+                                <span class="impact-value" id="recyclingRate">0%</span>
+                                <span class="impact-label">Recycling Rate</span>
+                            </div>
+                            <div class="impact-item">
+                                <span class="impact-value" id="wasteProcessed">0</span>
+                                <span class="impact-label">Items Processed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>System Performance</h4>
+                        <div class="performance-metrics" id="performanceMetrics">
+                            <!-- Performance metrics will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Tab -->
+            <div class="tab-content" id="controlsTab">
+                <div class="control-groups">
+                    <div class="control-group">
+                        <h4>Detection Settings</h4>
+                        <div class="control-item">
+                            <label for="confidenceThreshold">Confidence Threshold</label>
+                            <input type="range" id="confidenceThreshold" min="0.5" max="1" step="0.01" value="0.8">
+                            <span id="confidenceValue">80%</span>
+                        </div>
+                        <div class="control-item">
+                            <label for="autoCalibration">Auto Calibration</label>
+                            <input type="checkbox" id="autoCalibration" checked>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <h4>System Alerts</h4>
+                        <div class="control-item">
+                            <label for="alertThreshold">Alert Threshold (%)</label>
+                            <input type="number" id="alertThreshold" value="90" min="50" max="100">
+                        </div>
+                        <div class="control-item">
+                            <button class="btn btn--secondary" id="calibrateBtn">🎯 Calibrate System</button>
+                            <button class="btn btn--secondary" id="maintenanceBtn">🔧 Maintenance Mode</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>System Settings</h2>
+                <button class="modal-close" id="closeSettings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3>Display</h3>
+                        <div class="setting-item">
+                            <label for="themeToggle">Dark Theme</label>
+                            <input type="checkbox" id="themeToggle" checked>
+                        </div>
+                        <div class="setting-item">
+                            <label for="animationsToggle">Animations</label>
+                            <input type="checkbox" id="animationsToggle" checked>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>Notifications</h3>
+                        <div class="setting-item">
+                            <label for="soundAlerts">Sound Alerts</label>
+                            <input type="checkbox" id="soundAlerts" checked>
+                        </div>
+                        <div class="setting-item">
+                            <label for="emailAlerts">Email Alerts</label>
+                            <input type="checkbox" id="emailAlerts">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="nav-items">
+            <button class="nav-item active" data-section="processing">
+                <span class="nav-icon">🏭</span>
+                <span class="nav-label">Processing</span>
+            </button>
+            <button class="nav-item" data-section="bins">
+                <span class="nav-icon">🗂️</span>
+                <span class="nav-label">Bins</span>
+            </button>
+            <button class="nav-item" data-section="dashboard">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="nav-item" data-section="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Initializing AI Waste Management System...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
